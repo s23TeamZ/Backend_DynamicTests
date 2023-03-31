@@ -1,3 +1,7 @@
 selenium
 pyvirtualdisplay
 browsermob-proxy
+requests
+fastapi
+uvicorn
+python-multipart

@@ -13,7 +13,7 @@ RUN echo "===> Installing system dependencies..." && \
     fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 \
     libnspr4 libnss3 lsb-release xdg-utils libxss1 libdbus-glib-1-2 libgbm1 libu2f-udev \
     $BUILD_DEPS \
-    xvfb && \
+    xvfb  wdiff && \
     \
     echo "===> Installing chromedriver and google-chrome..." && \
     CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
@@ -29,27 +29,30 @@ RUN echo "===> Installing system dependencies..." && \
     rm $CHROME_SETUP && \
     \
     \
-    echo "===> Installing BrowserMob Proxy..." && \
-    wget https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy-2.1.4/browsermob-proxy-2.1.4-bin.zip && \
-    unzip && \
-    cp phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs && \
-    rm phantomjs-2.1.1-linux-x86_64.tar.bz2 && \
-    \
-    \
     echo "===> Remove build dependencies..." && \
     apt-get remove -y $BUILD_DEPS && rm -rf /var/lib/apt/lists/*
-
+# echo "===> Installing BrowserMob Proxy..." && \
+    # wget https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy-2.1.4/browsermob-proxy-2.1.4-bin.zip && \
+    # unzip && \
+    # cp phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs && \
+    # rm phantomjs-2.1.1-linux-x86_64.tar.bz2 && \
+    # \
+    # \
 WORKDIR /app
 RUN mkdir "downloads_folder"
-RUN echo "===> Installing python dependencies..." && \
+RUN echo "===> Installing python dependencies..."
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
-
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV PYTHONUNBUFFERED=1
 
+COPY main.py .
+COPY browser_func.py .
+COPY ublock_origin_1_48_0_0.crx .
 
-CMD tail -f /dev/null
+# CMD tail -f /dev/null
 # CMD python3 example.py
+EXPOSE 7077
+ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7077", "--workers", "1"]
