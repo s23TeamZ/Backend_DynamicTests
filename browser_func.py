@@ -69,20 +69,20 @@ def chrome_run(BASE_URL: str):
     # proxy.new_har("myhar")
     # with open(os.path.join(dwn_folder_path,'myhar.har'), 'w') as har_file:
     #     json.dump(proxy.har, har_file)
-    print('Accessed %s ..', BASE_URL)
-    wait_for_downloads()
+    print('Accessed ..', BASE_URL)
+    wait_for_downloads(dwn_folder_path)
 
-    print('Page title: %s', browser.title)
+    print('Page title: ', browser.title)
     # p = input()
     browser.quit()
     display.stop()
     return dwn_folder_path
 
-def wait_for_downloads():
+def wait_for_downloads(dwn_folder_path):
     file_name = ''
     print("Waiting for downloads", end = '')
     while any([filename.endswith(".crdownload") for filename in 
-               os.listdir("downloads_folder")]):
+               os.listdir(dwn_folder_path)]):
         print("...", end = '')
         time.sleep(2)
 
@@ -100,7 +100,7 @@ def main_browser_func(BASE_URL: str):
         return_val['Files_Dwn'] = files_l
     return return_val
 
-if __name__ == '__main__':
-    chrome_run('https://google.com')
+# if __name__ == '__main__':
+#     chrome_run('https://google.com')
 
 
