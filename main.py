@@ -13,8 +13,11 @@ async def root():
 @app.post("/upload_url")
 async def upload_url(url: str = Form()):
     print(url)
-    data = {}
-    data = browser_func.main_browser_func(url)
+    data = {'logs':'', 'score': 0}
+    try:
+        data.update(browser_func.main_browser_func(url))
+    except Exception as e:
+        data['logs'] = f"Error : {e}"
     print(f"Return Data : ")
     print(data)
     return data
