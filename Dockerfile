@@ -40,6 +40,8 @@ RUN echo "===> Installing system dependencies..." && \
     # \
 WORKDIR /app
 RUN mkdir "downloads_folder"
+RUN mkdir "websites_html"
+COPY websites_html/ websites_html/
 RUN echo "===> Installing python dependencies..."
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
