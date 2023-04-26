@@ -109,7 +109,7 @@ def phishing_detect(BASE_URL: str, dwn_folder: str):
         dwn_folder_main = os.path.join(main_dwn_folder,dwn_folder)
         file_path = os.path.join(dwn_folder_main,'phish.html')
         if(len(req.content)==0):
-            return 
+            return ret_val[:-1] + ["Cannot connect to website"]
         with open(file_path, 'wb') as fp:
             fp.write(req.content)
     except Exception as e:
@@ -125,7 +125,18 @@ def phishing_detect(BASE_URL: str, dwn_folder: str):
             if(result[0]>= res_mx[0]):
                 res_mx = result
         print(f"phish result : {res_mx}")
-        if(res_mx[0]>=17):
+    except Exception as e:
+        return ret_val[:-1] + [str(e)]
+    try:
+        website_ext = re.findall(r'[\.\/](\w+)\.(com|org|edu|co|us|gov|uk|in)', BASE_URL)
+        valid_names = res_mx[1][:-5].split('_')
+        print(f"[~] phish =  {website_ext} ; {valid_names}")
+        if(res_mx[0]>=15 and len(website_ext)!=0):
+            false_p = any(i in website_ext[0] for i in valid_names)
+            if(false_p):
+                return ret_val
+            return [True] + res_mx + ['']
+        elif(res_mx[0]>=20):
             return [True] + res_mx + ['']
         else:
             return ret_val
