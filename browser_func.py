@@ -128,11 +128,11 @@ def phishing_detect(BASE_URL: str, dwn_folder: str):
     except Exception as e:
         return ret_val[:-1] + [str(e)]
     try:
-        website_ext = re.findall(r'[\.\/](\w+)\.(com|org|edu|co|us|gov|uk|in)', BASE_URL)
+        website_ext = re.findall(r'[\/]([\w\d\._-]+)\.(\w{2,4})', BASE_URL)[0]
         valid_names = res_mx[1][:-5].split('_')
-        print(f"[~] phish =  {website_ext} ; {valid_names}")
+        print(f"[~] phish match test =  {website_ext} ; {valid_names}")
         if(res_mx[0]>=15 and len(website_ext)!=0):
-            false_p = any(i in website_ext[0] for i in valid_names)
+            false_p = any(i in website_ext[0].split('.')[-1] for i in valid_names)
             if(false_p):
                 return ret_val
             return [True] + res_mx + ['']
@@ -148,8 +148,8 @@ def main_browser_func(BASE_URL: str):
     return_val = {"score": 0 if(dwn_data[0]) else 100*0.25*0.6}
     change_p = 0
     phish_p = 0
-    chrome_data = []
-    phishing_data = []
+    chrome_data = [False, 0, ['','']]
+    phishing_data = [False, 0, '', '']
     if(not dwn_data[0]):
         dwn_folder = f"{uuid.uuid4().hex[:10].upper()}"
         print(f"Folder Name : {dwn_folder}")
